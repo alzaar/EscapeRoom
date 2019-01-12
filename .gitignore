@@ -1,13 +1,13 @@
 ###########################
 # Unreal Generated Files #
 ##########################
-BuildingEscapeRoom/Content/StarterContent/
+BuildingEscapeRoom/Content
 */Binaries
 */Build
 */DerivedCacheMemory
 */Intermediate
 */Saved
-
+*/Content
 ######################
 # VS Generated Files #
 ######################

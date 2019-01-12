@@ -2,25 +2,34 @@
 
 #include "PositionReport.h"
 
-// Sets default values
-APositionReport::APositionReport()
-{
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
+#include "GameFramework/Actor.h"
 
+// Sets default values for this component's properties
+UPositionReport::UPositionReport()
+{
+	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
+	// off to improve performance if you don't need them.
+	PrimaryComponentTick.bCanEverTick = true;
+
+	// ...
 }
 
-// Called when the game starts or when spawned
-void APositionReport::BeginPlay()
+
+// Called when the game starts
+void UPositionReport::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	// ...s
+	
 }
 
-// Called every frame
-void APositionReport::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
 
+// Called every frame
+void UPositionReport::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
+{
+	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+
+	// ...
 }
 
