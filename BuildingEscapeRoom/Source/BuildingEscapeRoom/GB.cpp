@@ -46,19 +46,49 @@ void UGB::BeginPlay()
 
 void UGB::Grab() {
 	UE_LOG(LogTemp, Error, TEXT("Grab Presses"));
+	auto HitResult = GetFirstPhysicsBodyInReach();
+	auto ComponentToGrab = HitResult.GetComponent();
+	auto ActorHIt = HitResult.GetActor();
+
+	if (ActorHIt)
+	{
+		PhysicsHandleComponent->GrabComponent(
+			ComponentToGrab,
+			NAME_None,
+			ComponentToGrab->GetOwner()->GetActorLocation(),
+			true
+		);
+	}
 }
 
 void UGB::Release() {
 	UE_LOG(LogTemp, Error, TEXT("Grab Released"));
+	PhysicsHandleComponent->ReleaseComponent();
 }
+
+
 
 // Called every frame
 void UGB::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+	FVector PlayerViewPointLocation;
+	FRotator PlayerViewPointRotation;
+	GetWorld()->GetFirstPlayerController()->GetPlayerViewPoint(OUT PlayerViewPointLocation, OUT PlayerViewPointRotation);
+	//UE_LOG(LogTemp, Warning, TEXT("Location: %s    Rotation: %s"), *PlayerViewPointLocation.ToString(), *PlayerViewPointRotation.ToString());
 
+	FVector LineTraceDirection = PlayerViewPointRotation.Vector();
+	FVector LineTraceEnd = PlayerViewPointLocation + LineTraceDirection * Reach;
 	// ...
+	if(PhysicsHandleComponent->GrabbedComponent)
+	{
+		PhysicsHandleComponent->SetTargetLocation(LineTraceEnd);
+	}
+	
+}
 
+const FHitResult UGB::GetFirstPhysicsBodyInReach()
+{
 	FVector PlayerViewPointLocation;
 	FRotator PlayerViewPointRotation;
 	GetWorld()->GetFirstPlayerController()->GetPlayerViewPoint(OUT PlayerViewPointLocation, OUT PlayerViewPointRotation);
@@ -67,16 +97,6 @@ void UGB::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTic
 	FVector LineTraceDirection = PlayerViewPointRotation.Vector();
 	FVector LineTraceEnd = PlayerViewPointLocation + LineTraceDirection * Reach;
 
-	DrawDebugLine(
-		GetWorld(),
-		PlayerViewPointLocation,
-		LineTraceEnd,
-		FColor(255, 0, 0),
-		false,
-		0.f,
-		0.f,
-		10.f
-	);
 
 	FCollisionQueryParams TraceParameters(FName(TEXT("")), false, GetOwner());
 
@@ -93,6 +113,6 @@ void UGB::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTic
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Line Trace hit %s"), *(ActorHit->GetName()));
 	}
-	
-}
 
+	return Hit;
+}
